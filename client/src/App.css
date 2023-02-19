@@ -1,0 +1,11 @@
+* {
+    margin: 0%;
+    padding: 0%;
+    box-sizing: border-box;
+}
+.dish_table td {
+    font-weight: 500;
+}
+.dish_table td:not(:is(:nth-child(1), :nth-child(2))) {
+    white-space: nowrap;
+}
