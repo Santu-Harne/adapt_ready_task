@@ -9,3 +9,20 @@
 .dish_table td:not(:is(:nth-child(1), :nth-child(2))) {
     white-space: nowrap;
 }
+.dish_details h2,
+.dish_details h4 {
+    color: rgb(74, 113, 165);
+}
+.dish_details span {
+    color: rgba(0, 0, 0, 0.815);
+    font-size: 25px;
+}
+.dish_details table th {
+    white-space: nowrap;
+}
+.dish_details img {
+    height: 100%;
+}
+.sort_click {
+    cursor: pointer;
+}

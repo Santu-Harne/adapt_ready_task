@@ -6,12 +6,19 @@ import { getDishes } from '../actions/DishActions'
 
 function DataDisplay(props) {
     const dispatch = useDispatch();
-    const [dish, setDish] = useState([])
+    const { itemCount } = props
+    const [startOff, setStartOff] = useState(0)
+    const [pageCount, setPageCount] = useState(0)
+    const [curItem, setCurItem] = useState([])
+
     const [filterParams, setFilterParams] = useState({
         state: [],
         flavor_profile: [],
         diet: [],
-        searchString: ''
+        searchString: '',
+        sort: {
+            name: 1
+        }
     })
 
     const dishes = useSelector(state => state.result.dishes)
@@ -37,29 +44,27 @@ function DataDisplay(props) {
 
     const searchChange = async (e) => {
         e.preventDefault()
-        const { name, value } = e.target
-        await setFilterParams({ ...filterParams, searchString: value })
-        setTimeout(() => {
-            if (value.length >= 3) {
-                alert(filterParams.searchString)
-                // dispatch(getDishes(filterParams))
-            }
-        }, 3000);
+        const { value } = e.target
+        setFilterParams({ ...filterParams, searchString: value })
+        if (filterParams.searchString.length > 3) {
+            dispatch(getDishes(filterParams))
+        }
     }
 
     const apply_handler = (e) => {
         e.preventDefault();
         dispatch(getDishes(filterParams))
+        setFilterParams({ ...filterParams, searchString: '' })
     }
 
-    // receive the data memorize and return if input is changed
-    const iniFetch = useCallback(() => {
-        dispatch(getDishes(filterParams)) // sending action request to actions
-    }, [dispatch])
+    const sortChange = () => {
+        const value = filterParams.sort.name
+        setFilterParams(prevState => ({ ...prevState, sort: { ...prevState.sort, name: (value * -1) } }))
+    }
 
     useEffect(() => {
-        iniFetch()
-    }, [])
+        dispatch(getDishes(filterParams))
+    }, [filterParams.sort, filterParams.searchString])
 
     return (
         <div className='m-3'>
@@ -69,7 +74,14 @@ function DataDisplay(props) {
                         <div className='d-flex justify-content-between align-items-center'>
                             <h3>Dish Details</h3>
                             <div className='d-flex'>
-                                <input type="text" onChange={searchChange} value={filterParams.searchString} name="dish" id="dish" className='search_field form-control me-2' />
+                                <input type="text" onChange={searchChange} value={filterParams.searchString} name="dish" id="dish" className='search_field form-control me-2' list='dish_list' />
+                                <datalist id='dish_list'>
+                                    {dishes && dishes.map((item, index) => {
+                                        return (
+                                            <option key={index} value={item.name}>{item.name}</option>
+                                        )
+                                    })}
+                                </datalist>
                                 <div className="btn-group me-2">
                                     <button className="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                                         State
@@ -202,7 +214,7 @@ function DataDisplay(props) {
                             <table className="table table-striped dish_table">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
+                                        <th>Name <span className='float-end sort_click' onClick={() => sortChange()}><i className={filterParams.sort.name === -1 ? 'bi bi-caret-down-fill' : 'bi bi-caret-up-fill'}></i></span></th>
                                         <th>Ingredients</th>
                                         <th>Diet</th>
                                         <th>Prep_Time</th>
@@ -217,7 +229,7 @@ function DataDisplay(props) {
                                     {dishes && dishes.map((item, index) => {
                                         return (
                                             <tr key={index} className='align-items-center'>
-                                                <td><NavLink to={'/dishdetails'} className='text-decoration-none' state={{ dish: item }} >{item.name}</NavLink></td>
+                                                <td><NavLink to={'/dishdetails'} className='text-decoration-none' state={{ dish: item }} >{item.name} <i className="bi bi-box-arrow-up-right"></i></NavLink></td>
                                                 <td>{item.ingredients}</td>
                                                 <td>{item.diet}</td>
                                                 <td>{item.prep_time}</td>
