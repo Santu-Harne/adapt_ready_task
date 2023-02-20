@@ -5,9 +5,13 @@ const dishController = {
     getAll: async (req, res) => {
         try {
 
-            const sortValue = req.body.sort
+            const sortString = req.body.sort
+            for (const key in sortString) {
+                if (sortString[key] === true) sortString[key] = 1
+                if (sortString[key] === false) sortString[key] = -1
+            }
 
-            const dishes = await Dish.find(req.query).sort(sortValue)
+            const dishes = await Dish.find(req.query).sort(sortString)
 
             res.json(dishes)
         } catch (err) {

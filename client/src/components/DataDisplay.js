@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom';
 import { getDishes } from '../actions/DishActions'
+import ReactPaginate from 'react-paginate';
 
 
 function DataDisplay(props) {
@@ -17,7 +18,7 @@ function DataDisplay(props) {
         diet: [],
         searchString: '',
         sort: {
-            name: 1
+            name: true
         }
     })
 
@@ -57,17 +58,29 @@ function DataDisplay(props) {
         setFilterParams({ ...filterParams, searchString: '' })
     }
 
-    const sortChange = () => {
-        const value = filterParams.sort.name
-        setFilterParams(prevState => ({ ...prevState, sort: { ...prevState.sort, name: (value * -1) } }))
+    const sortChange = (name) => {
+        const value = filterParams.sort[name]
+        setFilterParams(prevState => ({ ...prevState, sort: { [name]: !value } }))
     }
 
     useEffect(() => {
         dispatch(getDishes(filterParams))
     }, [filterParams.sort, filterParams.searchString])
 
+    // pagination 
+    useEffect(() => {
+        const endOff = startOff + itemCount;
+        setPageCount(Math.ceil(dishes.length / itemCount))
+        setCurItem(dishes.slice(startOff, endOff))
+    }, [dishes, itemCount, startOff])
+
+    const handleClick = (event, value) => {
+        const newOff = (event.selected * props.itemCount)
+        setStartOff(newOff)
+    }
+
     return (
-        <div className='m-3'>
+        <div className='mx-5 mt-3'>
             <div className="row">
                 <div className="col-12">
                     <div className="card p-3 mb-2">
@@ -214,11 +227,11 @@ function DataDisplay(props) {
                             <table className="table table-striped dish_table">
                                 <thead>
                                     <tr>
-                                        <th>Name <span className='float-end sort_click' onClick={() => sortChange()}><i className={filterParams.sort.name === -1 ? 'bi bi-caret-down-fill' : 'bi bi-caret-up-fill'}></i></span></th>
+                                        <th>Name <span className='float-end sort_click' onClick={() => sortChange('name')}><i className={filterParams.sort['name'] === false ? 'bi bi-caret-down-fill' : 'bi bi-caret-up-fill'}></i></span></th>
                                         <th>Ingredients</th>
                                         <th>Diet</th>
-                                        <th>Prep_Time</th>
-                                        <th>Cook_Time</th>
+                                        <th>Prep_Time <span className=' sort_click' onClick={() => sortChange('prep_time')}><i className={filterParams.sort['prep_time'] === false ? 'bi bi-caret-down-fill' : 'bi bi-caret-up-fill'}></i></span></th>
+                                        <th>Cook_Time <span className=' sort_click' onClick={() => sortChange('cook_time')}><i className={filterParams.sort['cook_time'] === false ? 'bi bi-caret-down-fill' : 'bi bi-caret-up-fill'}></i></span></th>
                                         <th>Flavor_Profile</th>
                                         <th>Course</th>
                                         <th>State</th>
@@ -226,7 +239,7 @@ function DataDisplay(props) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {dishes && dishes.map((item, index) => {
+                                    {curItem && curItem.map((item, index) => {
                                         return (
                                             <tr key={index} className='align-items-center'>
                                                 <td><NavLink to={'/dishdetails'} className='text-decoration-none' state={{ dish: item }} >{item.name} <i className="bi bi-box-arrow-up-right"></i></NavLink></td>
@@ -243,7 +256,23 @@ function DataDisplay(props) {
                                     })}
                                 </tbody>
                             </table>
+
                         </div>
+                    </div>
+                    <div className='pagination'>
+                        <ReactPaginate
+                            pageCount={pageCount}
+                            className='pagination'
+                            pageClassName='page-item'
+                            pageLinkClassName='page-link'
+                            previousClassName='page-item'
+                            previousLinkClassName='page-link'
+                            nextClassName='page-item'
+                            nextLinkClassName='page-link'
+                            activeClassName='active'
+                            activeLinkClassName='active'
+                            onPageChange={handleClick}
+                        />
                     </div>
                 </div>
             </div>

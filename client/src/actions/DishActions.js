@@ -6,7 +6,6 @@ const baseUrl = 'http://localhost:7000/dish/getall'
 export const getDishes = createAsyncThunk(
     '/dish/getall',
     async (filterParams) => {
-        const searchString = filterParams.searchString
         let queryUrl = baseUrl
         const queryString = {}
         if (filterParams.state.length) {
