@@ -5,6 +5,7 @@ const DishDetails = () => {
     const location = useLocation()
     const { name, ingredients, flavor_profile, diet, cook_time, state, region, prep_time } = location.state.dish
     return (
+        // Displaying single dish details based on users click
         <div className='container'>
             <div className="row">
                 <div className="col-md-12 mt-3">

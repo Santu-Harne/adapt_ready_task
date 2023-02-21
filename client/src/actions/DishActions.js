@@ -7,7 +7,10 @@ export const getDishes = createAsyncThunk(
     '/dish/getall',
     async (filterParams) => {
         let queryUrl = baseUrl
+
+        // based on filter value creating parameter object
         const queryString = {}
+        queryString.sort = filterParams.sort
         if (filterParams.state.length) {
             queryString.state = filterParams.state
         }
@@ -17,11 +20,12 @@ export const getDishes = createAsyncThunk(
         if (filterParams.diet.length) {
             queryString.diet = filterParams.diet
         }
-        if (filterParams.searchString.length > 3) {
-            const regex = new RegExp(`/${filterParams.searchString}/`, 'i')
-            queryUrl = `${baseUrl}?name=${filterParams.searchString}`
+        if (filterParams.searchString.length >= 3) {
+            queryString.searchString = filterParams.searchString
         }
 
-        const result = await axios.post(`${queryUrl}`, filterParams, { params: { ...queryString } })
+
+        // calling api using axios.post method
+        const result = await axios.post(`${queryUrl}`, queryString)
         return result.data
     })
