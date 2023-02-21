@@ -1,12 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios'
 
-const baseUrl = 'http://localhost:7000/dish/getall'
-
 export const getDishes = createAsyncThunk(
     '/dish/getall',
     async (filterParams) => {
-        let queryUrl = baseUrl
 
         // based on filter value creating parameter object
         const queryString = {}
@@ -26,6 +23,13 @@ export const getDishes = createAsyncThunk(
 
 
         // calling api using axios.post method
-        const result = await axios.post(`${queryUrl}`, queryString)
+        const result = await axios.post(`http://localhost:7000/dish/getall`, queryString)
+        return result.data
+    })
+
+export const login = createAsyncThunk(
+    '/dish/login',
+    async (userCred) => {
+        const result = await axios.post('http://localhost:7000/dish/login', userCred)
         return result.data
     })

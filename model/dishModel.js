@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
+const connect1 = mongoose.createConnection(process.env.DISH_MONGO_URL || 'mongodb+srv://santosh283143:santosh1437@cluster0.nzq3jw9.mongodb.net/AdaptReady');
 
-const dishSchema = new mongoose.Schema({
+const dishSchema = connect1.model('Model', new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -49,7 +50,7 @@ const dishSchema = new mongoose.Schema({
 }, {
     collection: "dishes",
     timestamps: true
-})
+}))
 
-module.exports = mongoose.model("Dish", dishSchema)
+module.exports = dishSchema
 

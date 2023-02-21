@@ -10,8 +10,7 @@ const DishReducer = createSlice({
     initialState,
     extraReducers: {
         [getDishes.fulfilled]: (state, action) => {
-            // console.log(action.payload);
-            state.dishes = action.payload
+            state.dishes = action.payload.data
         }
     }
 })

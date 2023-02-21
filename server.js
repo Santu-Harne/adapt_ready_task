@@ -7,8 +7,6 @@ const assert = require("assert")
 const path = require("path")
 const { StatusCodes } = require("http-status-codes")
 
-const connectDB = require("./db/mongoConnect")
-
 // port
 const PORT = process.env.PORT || 7000
 
@@ -31,7 +29,6 @@ app.use('/dish', dishRoute)
 
 const start = async () => {
     try {
-        await connectDB()
         app.listen(PORT, () => {
             console.log(`server is listening @ http://localhost:${PORT}`);
         })

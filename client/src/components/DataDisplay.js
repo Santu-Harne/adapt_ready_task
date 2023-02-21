@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 import { getDishes } from '../actions/DishActions'
 import ReactPaginate from 'react-paginate';
+import { toast } from 'react-toastify';
 
 
 function DataDisplay(props) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     //storing dish data to variable using useSelector function
     const dishes = useSelector(state => state.result.dishes)
@@ -87,6 +90,14 @@ function DataDisplay(props) {
     const handleClick = (event, value) => {
         const newOff = (event.selected * props.itemCount)
         setStartOff(newOff)
+    }
+
+    //logout functionality
+    const logout_handler = () => {
+        if (window.confirm('Are you sure to logout?')) {
+            toast.success('Logged out successfully')
+            navigate('/')
+        }
     }
 
     return (
@@ -213,7 +224,7 @@ function DataDisplay(props) {
                                     </ul>
                                 </div>
                                 <div className="btn-group me-2">
-                                    <button className="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">Diet</button>
+                                    <button className="btn  btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">Diet</button>
                                     <ul className="dropdown-menu">
                                         <div className='form-check'>
                                             <input type="checkbox" name="diet" id="diet" value='vegetarian' className='me-1' onChange={(e) => filterChange(e.target.name, e.target.value)} />
@@ -225,7 +236,8 @@ function DataDisplay(props) {
                                         </div>
                                     </ul>
                                 </div>
-                                <button className='btn btn-sm btn-success' onClick={apply_handler}>Apply</button>
+                                <button className='btn btn-sm btn-success me-2' onClick={apply_handler}>Apply</button>
+                                <button className='btn btn-sm btn-secondary' onClick={logout_handler}>Logout</button>
                             </div>
                         </div>
                     </div>

@@ -1,5 +1,8 @@
 const { StatusCodes } = require("http-status-codes")
+const bcrypt = require("bcryptjs")
+
 const Dish = require('../model/dishModel')
+const User = require('../model/userModel')
 
 const dishController = {
     getAll: async (req, res) => {
@@ -20,9 +23,29 @@ const dishController = {
 
             const dishes = await Dish.find({ ...filterParams, name: regExp }).sort(sortString)
 
-            res.json(dishes)
-        } catch (err) {
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: err.message })
+            return res.status(StatusCodes.OK).json({ msg: 'All Dish data', data: dishes })
+        } catch (error) {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message })
+        }
+    },
+    login: async (req, res) => {
+        try {
+            const { email, password } = req.body
+
+            //checking user exists or not
+            const extUser = await User.findOne({ email })
+            if (!extUser)
+                return res.status(StatusCodes.NOT_FOUND).json({ msg: "User doesn't exists.." })
+
+            // comparing password
+            const isMatch = await bcrypt.compare(password, extUser.password)
+            if (!isMatch)
+                return res.status(StatusCodes.BAD_REQUEST).json({ msg: "Password didn't match" })
+
+
+            return res.status(StatusCodes.OK).json({ msg: 'User Logged in successfully', data: extUser })
+        } catch (error) {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: error.message })
         }
     }
 }
