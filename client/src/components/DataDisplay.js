@@ -269,8 +269,8 @@ function DataDisplay(props) {
                                                 <td><NavLink to={'/dishdetails'} className='text-decoration-none' state={{ dish: item }} >{item.name} <i className="bi bi-box-arrow-up-right"></i></NavLink></td>
                                                 <td>{item.ingredients}</td>
                                                 <td>{item.diet}</td>
-                                                <td>{item.prep_time}</td>
-                                                <td>{item.cook_time}</td>
+                                                <td>{item.prep_time} min</td>
+                                                <td>{item.cook_time} min</td>
                                                 <td>{item.flavor_profile}</td>
                                                 <td>{item.course}</td>
                                                 <td>{item.state}</td>
