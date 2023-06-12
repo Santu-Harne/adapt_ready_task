@@ -26,6 +26,17 @@ const dishRoute = require('./route/dishRoute')
 // primary route 
 app.use('/dish', dishRoute)
 
+//static files
+app.use(express.static(path.join(__dirname, './client/build')))
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './client/build/index.html'))
+})
+
+app.all('*', (req, res) => {
+    res.status(StatusCodes.NOT_FOUND).json({ msg: "The Request route path not found" })
+})
+
 const start = async () => {
     try {
         app.listen(PORT, () => {
